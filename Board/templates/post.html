@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Объявление
+{% endblock title %}
+
+{% block content %}
+<h1>{{ post }}</h1>
+<h4>{{ post.time_created|date:'d M Y' }}</h4>
+<br>
+<h3>{{ post.text | safe }}</h3>
+<!--<a href="reply" class="btn btn-info" role="button" aria-pressed="true">Откликнуться</a>-->
+<button> <a href="{% url 'reply_create' post.id %}">Откликнуться</a> </button>
+
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+Отклики на мои объявления
+{% endblock title %}
+
+{% block content %}
+    {% for reply in replies %}
+      <p>{{ reply.date_created }}</p>
+      <p>{{ reply.text }}</p>
+<br>
+    {% empty %}
+      <p>Нет откликов.</p>
+    {% endfor %}
+{% endblock content %}
