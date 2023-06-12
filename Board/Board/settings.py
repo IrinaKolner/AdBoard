@@ -152,3 +152,14 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/posts/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/signup/'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'ann.annannanna@yandex.ru'
+EMAIL_HOST_PASSWORD = 'xaslqdqipdgalroo'
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

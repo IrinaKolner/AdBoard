@@ -6,6 +6,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post, Reply, Author
 from django.contrib.auth.models import User
 from .forms import PostForm, ReplyForm
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 class PostsList(ListView):
@@ -90,10 +92,11 @@ class ReplyCreate(LoginRequiredMixin, CreateView):
         return url
 
 
-class Replies(ListView):
+class Replies(LoginRequiredMixin, ListView):
     model = Reply
     template_name = 'my_replies.html'
     context_object_name = 'replies'
+    ordering = '-date_created'
 
     # сделать проверку не на то - не должен отправитель и автор совпадать
     # def get_queryset(self):
@@ -115,3 +118,28 @@ class Replies(ListView):
 #         self.categories = get_object_or_404(Categories, id=self.kwargs['pk'])
 #         queryset = Post.objects.filter(category=self.categories).order_by('-time_created')
 #         return queryset
+
+
+# принимать и удалять отклики
+# не работает
+class ReplyUpdate(LoginRequiredMixin, UpdateView):
+    model = Reply
+    fields = ['text', 'confirmed']
+    template_name = "reply_confirmed.html"
+    # success_url = reverse_lazy('my_replies')
+
+    def form_valid(self, form):
+        reply = form.save(commit=False)
+        if reply.confirmed:
+            subject = 'Ваш отклик на объявление был принят'
+            message = f'Ваш отклик "{reply.text}" на объявление "{reply.post.title}" был принят.'
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [reply.sender.email]
+            # recipient_list = ['forstbooksstudents@gmail.com']
+            send_mail(subject, message, from_email, recipient_list)
+        return super().form_valid(form)
+
+class ReplyDelete(LoginRequiredMixin, DeleteView):
+    model = Reply
+    template_name = 'reply_confirm_delete.html'
+    success_url = reverse_lazy('my_replies')

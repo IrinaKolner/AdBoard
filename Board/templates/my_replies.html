@@ -9,6 +9,10 @@
     {% for reply in replies %}
       <p>{{ reply.date_created }}</p>
       <p>{{ reply.text }}</p>
+        <a href="{% url 'reply_update' pk=reply.pk %}">Принять</a>
+        <a href="{% url 'reply_delete' pk=reply.pk %}">Удалить</a>
+<br>
+<br>
 <br>
     {% empty %}
       <p>Нет откликов.</p>
