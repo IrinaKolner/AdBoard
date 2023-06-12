@@ -36,6 +36,7 @@ CATEGORIES = [
 
 class Categories(models.Model):
     name = models.CharField(max_length=17, choices=CATEGORIES, default=tank)
+    subscribers = models.ManyToManyField(User, blank=True, related_name='categories')
 
     def __str__(self):
         return self.name.title()

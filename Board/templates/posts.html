@@ -12,16 +12,19 @@
 <!--       {{ posts }}-->
         {% for post in posts %}
         <p>
-        <b>{{ post.title }}</b>
+<!--        <b>{{ post.title }}</b>-->
+            <b><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></b>
+
                 <br>
         {{ post.time_created }}
                 <br>
         {{ post.text | safe }}
-        {{ post.category }}
-<!--            хрен с ним, не работает-->
-<!--            {% for category in post.category.all %}-->
-<!--            <a href="{% url 'category_list' category.id %}">{{ category }}</a>-->
-<!--            {% endfor %}-->
+<!--            работает-->
+<!--        {{ post.category }}-->
+<!--             не работает-->
+            {% for category in post.categories.all %}
+            <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+            {% endfor %}
                 <br>
                 <br>
         </p>

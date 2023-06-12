@@ -1,13 +1,14 @@
 from datetime import datetime
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post, Reply, Author
+from .models import Post, Reply, Author, Categories
 from django.contrib.auth.models import User
 from .forms import PostForm, ReplyForm
 from django.conf import settings
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
 
 
 class PostsList(ListView):
@@ -108,16 +109,30 @@ class Replies(LoginRequiredMixin, ListView):
         return queryset.filter(post__author_id=self.request.user.id)
 
 
-# # ничего не работает
-# class CategoryList(ListView):
-#     model = Categories
-#     template_name = 'categories.html'
-#     context_object_name = 'category_list'
-#
-#     def get_queryset(self):
-#         self.categories = get_object_or_404(Categories, id=self.kwargs['pk'])
-#         queryset = Post.objects.filter(category=self.categories).order_by('-time_created')
-#         return queryset
+class CategoryList(ListView):
+    model = Post
+    template_name = 'categories.html'
+    context_object_name = 'category_list'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Categories, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.category).order_by('-time_created')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Categories.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    message = 'Вы успешно подписались на рассылку категории'
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
 
 
 # принимать и удалять отклики

@@ -1,0 +1,50 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Объявления
+{% endblock title %}
+
+{% block content %}
+<h1>Все объявления</h1>
+   <h3>{{ time_now|date:'M d Y' }}</h3>
+<br>
+{% if is_not_subscriber %}
+<p class="text_center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btn-sm">Подписаться</a></p>
+{% endif %}
+<br>
+   {% if category_list %}
+<!--       {{ posts }}-->
+        {% for post in category_list %}
+        <p>
+        <b>{{ post.title }}</b>
+                <br>
+<!--        {{ post.time_created }}-->
+            <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+                <br>
+        {{ post.text | safe }}
+<!--        {{ post.category }}-->
+                <br>
+                <br>
+        </p>
+                   {% for category in post.categories.all %}
+                   <a href="{% url 'category_list' category.id %}">{{category}}</a>
+                   {% endfor %}
+<!--по-дебильному это выглядит-->
+        <hr style="height:4px;color:gray">
+    <style>
+      hr {
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
+        {% endfor %}
+
+   {% else %}
+       <h2>Объявлений нет!</h2>
+   {% endif %}
+
+{% for category in post.category.all %}
+{{ category }}
+{% endfor%}
+{% endblock content %}
