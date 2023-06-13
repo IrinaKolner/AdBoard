@@ -105,9 +105,14 @@ class Replies(LoginRequiredMixin, ListView):
     #     queryset = super().get_queryset()
     #     return queryset.filter(sender_id=self.request.user.id)
 
+    # раньше работало, теперь нет
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     return queryset.filter(post__author_id=self.request.user.id)
+
     def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(post__author_id=self.request.user.id)
+        self.queryset = Reply.objects.filter(post__author__user_id=self.request.user.id)
+        return super().get_queryset()
 
 
 class CategoryList(ListView):
