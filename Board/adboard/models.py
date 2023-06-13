@@ -64,7 +64,7 @@ class Post(models.Model):
 
 class Reply(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     confirmed = models.BooleanField(default=False) # это понадобится для подтверждения отклика

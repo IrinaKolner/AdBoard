@@ -98,6 +98,7 @@ class Replies(LoginRequiredMixin, ListView):
     template_name = 'my_replies.html'
     context_object_name = 'replies'
     ordering = '-date_created'
+    paginate_by = 5
 
     # сделать проверку не на то - не должен отправитель и автор совпадать
     # def get_queryset(self):
@@ -158,3 +159,20 @@ class ReplyDelete(LoginRequiredMixin, DeleteView):
     model = Reply
     template_name = 'reply_confirm_delete.html'
     success_url = reverse_lazy('my_replies')
+
+
+# фильтрация откликов по объявлениям
+class RepliesSorted(ListView):
+    model = Reply
+    template_name = 'sorted_replies.html'
+    context_object_name = 'sorted_replies'
+    paginate_by = 5
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return post.replies.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = get_object_or_404(Post, pk=self.kwargs['pk'])
+        return context

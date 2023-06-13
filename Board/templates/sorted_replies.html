@@ -6,9 +6,11 @@
 {% endblock title %}
 
 {% block content %}
-    {% for reply in replies %}
+    {% for reply in sorted_replies %}
+      <p>{{ reply.post.title }}</p>
+            <a href="{% url 'replies_sorted_list' reply.post.id %}">{{ reply.post.title }}</a>
+
       <p>{{ reply.date_created }}</p>
-        <a href="{% url 'replies_sorted_list' reply.post.id %}">{{ reply.post.title }}</a>
       <p>{{ reply.text }}</p>
         <a href="{% url 'reply_update' pk=reply.pk %}">Принять</a>
         <a href="{% url 'reply_delete' pk=reply.pk %}">Удалить</a>
@@ -18,7 +20,6 @@
     {% empty %}
       <p>Нет откликов.</p>
     {% endfor %}
-
 
    {% if page_obj.has_previous %}
        <a href="?page=1">1</a>
