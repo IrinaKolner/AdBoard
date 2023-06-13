@@ -9,22 +9,16 @@
    <h3>{{ time_now|date:'M d Y' }}</h3>
 <br>
    {% if posts %}
-<!--       {{ posts }}-->
         {% for post in posts %}
         <p>
-<!--        <b>{{ post.title }}</b>-->
             <b><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></b>
 
                 <br>
         {{ post.time_created }}
                 <br>
         {{ post.text | safe }}
-<!--            работает-->
-<!--        {{ post.category }}-->
-<!--             не работает-->
-            {% for category in post.categories.all %}
-            <a href="{% url 'category_list' category.id %}">{{ category }}</a>
-            {% endfor %}
+            <a href="{% url 'category_list' post.category.id %}">{{ post.category }}</a>
+
                 <br>
                 <br>
         </p>
