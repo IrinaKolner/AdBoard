@@ -9,6 +9,7 @@ from .forms import PostForm, ReplyForm
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
+from .tasks import send_message_reply_created
 
 
 class PostsList(ListView):
@@ -85,6 +86,13 @@ class ReplyCreate(LoginRequiredMixin, CreateView):
             reply.post = Post.objects.get(id=pk)
             reply.sender = User.objects.get(username=sender)
         reply.save()
+
+        post = reply.post
+        author = post.author
+        email = author.user.email
+        # текст сообщения
+        # text = post.text
+        send_message_reply_created.delay(email)
         return super().form_valid(form)
 
     def get_success_url(self):

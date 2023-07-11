@@ -2,10 +2,10 @@ from celery import shared_task
 import datetime
 from django.conf import settings
 
-
 from adboard.models import Post, Categories, User
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.core.mail import send_mail
 
 
 
@@ -33,3 +33,12 @@ def all_week_posts():
     )
     msg.attach_alternative(html_content, 'text/html')
     msg.send()
+
+@shared_task
+def send_message_reply_created(email):
+    send_mail(
+        subject=f'Вы получили отклик на свое сообщение',
+        message=f'Здесь будет текст сообщения',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email]
+    )
