@@ -149,24 +149,25 @@ def subscribe(request, pk):
     return render(request, 'subscribe.html', {'category': category, 'message': message})
 
 
-# принимать и удалять отклики
-# не работает
-class ReplyUpdate(LoginRequiredMixin, UpdateView):
+class ReplyConfirmed(LoginRequiredMixin, CreateView):
     model = Reply
-    fields = ['text', 'confirmed']
-    template_name = "reply_confirmed.html"
-    # success_url = reverse_lazy('my_replies')
+    template_name = 'reply_confirmed.html'
+    form_class = ReplyForm
+    context_object_name = 'confirmed'
+    success_url = 'replies/'
 
-    def form_valid(self, form):
-        reply = form.save(commit=False)
-        if reply.confirmed:
-            subject = 'Ваш отклик на объявление был принят'
-            message = f'Ваш отклик "{reply.text}" на объявление "{reply.post.title}" был принят.'
-            from_email = settings.DEFAULT_FROM_EMAIL
-            recipient_list = [reply.sender.email]
-            # recipient_list = ['forstbooksstudents@gmail.com']
-            send_mail(subject, message, from_email, recipient_list)
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data()
+        reply_id = self.kwargs.get('pk')
+        Reply.objects.filter(pk=reply_id).update(confirmed=True)
+        data['message'] = 'This reply was confirmed'
+        # send_mail(
+        #     subject='Reply comfirmed',
+        #     message=f'User {self.request.user} comfirmed your reply',
+        #     from_email=settings.DEFAULT_FROM_EMAIL,
+        #     recipient_list=[User.objects.filter(username=self.request.user).values('email')[0]['email']]
+        # )
+        return data
 
 class ReplyDelete(LoginRequiredMixin, DeleteView):
     model = Reply

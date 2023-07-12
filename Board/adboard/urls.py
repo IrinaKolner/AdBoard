@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданное нами представление
-from .views import PostsList, PostDetail, PostCreate, PostUpdate, PostDelete, ReplyCreate, Replies, ReplyUpdate, ReplyDelete, CategoryList, subscribe, RepliesSorted
+from .views import PostsList, PostDetail, PostCreate, PostUpdate, PostDelete, ReplyCreate, Replies, ReplyConfirmed, ReplyDelete, CategoryList, subscribe, RepliesSorted
 
 
 urlpatterns = [
@@ -12,7 +12,7 @@ urlpatterns = [
    path('<int:pk>/reply/', ReplyCreate.as_view(), name='reply_create'),
 
    path('my_replies/', Replies.as_view(), name='my_replies'),
-   path('reply/<int:pk>/update/', ReplyUpdate.as_view(), name='reply_update'),
+   path('reply/<int:pk>/update/', ReplyConfirmed.as_view(), name='reply_update'),
    path('reply/<int:pk>/delete/', ReplyDelete.as_view(), name='reply_delete'),
 
    path('categories/<int:pk>/', CategoryList.as_view(), name='category_list'),
