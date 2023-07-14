@@ -9,3 +9,5 @@ pip3 install -U "celery[redis]"
 
 при запуске celery не забыть активировать вирт. среду
 далее -> celery -A Board worker -l INFO -B
+
+python -m pip install Django --trusted-host=pypi.python.org --trusted-host=pypi.org --trusted-host=files.pythonhosted.org

@@ -40,5 +40,6 @@ def send_message_reply_created(email):
         subject=f'Вы получили отклик на свое сообщение',
         message=f'Здесь будет текст сообщения',
         from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[email]
+        recipient_list=[email],
+        fail_silently=False
     )
