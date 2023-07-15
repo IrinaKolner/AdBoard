@@ -67,12 +67,7 @@ class Reply(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='replies')
     text = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
-    confirmed = models.BooleanField(default=False) # это понадобится для подтверждения отклика
+    confirmed = models.BooleanField(default=False)
 
 
-# # это нужно для новостей, но возможно можно будет убрать и как-то по-другому реализовать рассылку новостей
-# class News(models.Model):
-#     title = models.CharField(max_length=100, default="Default value")
-#     text = models.TextField()
-#     time_created = models.DateTimeField(auto_now_add=True)
 

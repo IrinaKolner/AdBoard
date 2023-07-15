@@ -8,8 +8,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.core.mail import send_mail
 
 
-
-
 @shared_task
 def all_week_posts():
     today = datetime.datetime.now()
@@ -42,4 +40,14 @@ def send_message_reply_created(email):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[email],
         fail_silently=False
+    )
+
+@shared_task
+def send_message_confirmed(email):
+    send_mail(
+        subject=f'Ваш отклик был принят.',
+        message=f'Ваш отклик был принят.',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[email],
+        fail_silently=False,
     )

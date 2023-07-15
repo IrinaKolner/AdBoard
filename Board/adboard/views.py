@@ -9,7 +9,7 @@ from .forms import PostForm, ReplyForm
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-from .tasks import send_message_reply_created
+from .tasks import send_message_reply_created, send_message_confirmed
 
 
 class PostsList(ListView):
@@ -90,13 +90,13 @@ class ReplyCreate(LoginRequiredMixin, CreateView):
         post = reply.post
         author = post.author
         email = author.user.email
-        # текст сообщения
+        # не забыть добавить текст сообщения + в аргументы здесь и в tasks.py
         # text = post.text
         send_message_reply_created.delay(email)
         return super().form_valid(form)
 
     def get_success_url(self):
-        # таким образом отправляет на страницу с объявлением, по которому составлялся отклик
+        # отправляет на страницу с объявлением, по которому составлялся отклик
         url = '/'.join(self.request.path.split('/')[0:-2])
         return url
 
@@ -108,15 +108,7 @@ class Replies(LoginRequiredMixin, ListView):
     ordering = '-date_created'
     paginate_by = 5
 
-    # сделать проверку не на то - не должен отправитель и автор совпадать
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     return queryset.filter(sender_id=self.request.user.id)
-
-    # раньше работало, теперь нет
-    # def get_queryset(self):
-    #     queryset = super().get_queryset()
-    #     return queryset.filter(post__author_id=self.request.user.id)
+    # сделать проверку -> не должен отправитель и автор совпадать
 
     def get_queryset(self):
         self.queryset = Reply.objects.filter(post__author__user_id=self.request.user.id)
@@ -160,13 +152,9 @@ class ReplyConfirmed(LoginRequiredMixin, CreateView):
         data = super().get_context_data()
         reply_id = self.kwargs.get('pk')
         Reply.objects.filter(pk=reply_id).update(confirmed=True)
-        data['message'] = 'This reply was confirmed'
-        # send_mail(
-        #     subject='Reply comfirmed',
-        #     message=f'User {self.request.user} comfirmed your reply',
-        #     from_email=settings.DEFAULT_FROM_EMAIL,
-        #     recipient_list=[User.objects.filter(username=self.request.user).values('email')[0]['email']]
-        # )
+
+        email = self.request.user.email
+        send_message_confirmed(email)
         return data
 
 class ReplyDelete(LoginRequiredMixin, DeleteView):

@@ -1,13 +1,13 @@
-
-
-
-
-еженедельная рассылка
+python3 -m venv venv
+source venv/bin/activate
+python -m pip install Django
+pip install django-ckeditor
+pip install django-allauth
 pip3 install celery
 pip3 install redis
 pip3 install -U "celery[redis]"
 
 при запуске celery не забыть активировать вирт. среду
-далее -> celery -A Board worker -l INFO -B
+celery -A Board worker -l INFO -B
 
 python -m pip install Django --trusted-host=pypi.python.org --trusted-host=pypi.org --trusted-host=files.pythonhosted.org
